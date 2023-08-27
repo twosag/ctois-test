@@ -1,0 +1,6 @@
+{
+    "watch": ["ctois-test"],
+    "ext": "ts",
+    "exec": "ts-node-dev src/bot.ts"
+  }
+  
