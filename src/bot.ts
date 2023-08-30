@@ -1,29 +1,41 @@
-import { Bot, Context, } from "grammy";
-//import { problemMenu } from "../keyboards";
-
-
+import { Bot, Context, session, SessionFlavor } from 'grammy';
+import { mainMenu } from './buttons';
+import { setupProblem1Handlers } from './scenes/problem1';
+import { setupProblem2Handlers } from './scenes/problem2';
+import { setupProblem3Handlers } from './scenes/problem3';
+import { setupProblem4Handlers } from './scenes/problem4';
 import dotenv from "dotenv";
-import { first_menu } from "./keyboards";
 dotenv.config();
+
+interface SessionData {
+  button?: string | null | true;
+  textFirst_problem1?: string | null | true;
+  textSecond_problem1?: string | null | true;
+  url?: string | null | true;
+  textFirst_problem3?: string | null | true;
+  textSecond_problem3?: string | null | true;
+  textFirst_problem4?: string | null | true;
+  lastMessageId?: number;
+}
+
+export type MyContext = Context & SessionFlavor<SessionData>;
 
 
 const token = process.env.BOT_TOKEN as string;
-export const bot = new Bot(token);
- 
-bot.use(first_menu);
+export const bot = new Bot<MyContext>(token);
 
-//const userSessions: session.SessionMap = new Map();
+function initial(): SessionData {
+  return {};
+}
+bot.use(session({ initial }));
 
-bot.command("start", async (ctx: Context) => {
-  //userSessions.set(ctx.chat?.id!, {step: 0 });
-  await ctx.reply("Привет, " + (ctx.from?.username || ""), { reply_markup: first_menu, } );
-  console.log("Бот запущен");
-});
+bot.command('start', (ctx) => ctx.reply('Выберите проблему:', { reply_markup: mainMenu }));
 
-/*bot.callbackQuery('/problem_(.+)/', async (ctx) => {
-  await ctx.editMessageText("Оберіть інститут:", {
-      reply_markup: institutionsMenu,
-  });
-});*/
+setupProblem1Handlers(bot);
+setupProblem2Handlers(bot);
+setupProblem3Handlers(bot);
+setupProblem4Handlers(bot);
+
 bot.start();
+
 
