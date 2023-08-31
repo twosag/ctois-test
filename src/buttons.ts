@@ -1,4 +1,4 @@
-import { InlineKeyboard } from "grammy";
+import { InlineKeyboard, Keyboard } from "grammy";
 
 export const mainMenu = new InlineKeyboard()
   .text('Проблема 1', 'problem1').row()
@@ -31,3 +31,5 @@ export const choice3Menu = new InlineKeyboard()
   .text('Кнопка13', 'button13').row()
   .text('Кнопка14', 'button14').row()
   .text('Кнопка15', 'button15').row();
+
+export const backButton = new Keyboard().text("Назад").resized().oneTime();
