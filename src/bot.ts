@@ -4,6 +4,12 @@ import { setupProblem1Handlers } from './scenes/problem1';
 import { setupProblem2Handlers } from './scenes/problem2';
 import { setupProblem3Handlers } from './scenes/problem3';
 import { setupProblem4Handlers } from './scenes/problem4';
+import {
+  type Conversation,
+  type ConversationFlavor,
+  conversations,
+  createConversation,
+} from "@grammyjs/conversations";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,7 +24,7 @@ interface SessionData {
   lastMessageId?: number;
 }
 
-export type MyContext = Context & SessionFlavor<SessionData>;
+type MyContext = Context & SessionFlavor<SessionData> & ConversationFlavor;
 
 
 const token = process.env.BOT_TOKEN as string;
@@ -28,6 +34,7 @@ function initial(): SessionData {
   return {};
 }
 bot.use(session({ initial }));
+bot.use(conversations());
 
 bot.command('start', (ctx) => ctx.reply('Выберите проблему:', { reply_markup: mainMenu }));
 
@@ -35,7 +42,6 @@ setupProblem1Handlers(bot);
 setupProblem2Handlers(bot);
 setupProblem3Handlers(bot);
 setupProblem4Handlers(bot);
-
 bot.start();
 
 
