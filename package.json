@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@grammyjs/conversations": "github:grammyjs/conversations",
     "@grammyjs/menu": "^1.2.1",
     "add": "^2.0.6",
     "dotenv": "^16.3.1",

@@ -1,6 +1,12 @@
 import { MyContext } from '../bot';
 import { problem1Menu, choice1Menu, choice2Menu,choice3Menu } from '../buttons';
-import { Bot} from "grammy";
+import { Bot, Context} from "grammy";
+import {
+    type Conversation,
+    type ConversationFlavor,
+    conversations,
+    createConversation,
+  } from "@grammyjs/conversations";
 export function setupProblem1Handlers(bot: Bot<MyContext>) {
 bot.callbackQuery(/^problem1$/, (ctx) => ctx.editMessageText('Выберите:', { reply_markup: problem1Menu }));
   
@@ -17,6 +23,17 @@ bot.callbackQuery(/^problem1$/, (ctx) => ctx.editMessageText('Выберите:'
       await ctx.editMessageText('Выберите кнопку:', { reply_markup: menu });
   });
   
+  type MyConversation = Conversation<MyContext>;
+
+  async function textFirstOfProblem1(conversation: MyConversation, ctx: MyContext) {
+    await ctx.reply("Привіт! І бувайте!");
+    // Виходимо з розмови:
+    return;
+  }
+
+
+
+
   bot.callbackQuery(/^button[0-9]+$/, async (ctx) => {
       const button = ctx.callbackQuery.data;
       ctx.session.button = button;
@@ -39,3 +56,5 @@ bot.callbackQuery(/^problem1$/, (ctx) => ctx.editMessageText('Выберите:'
           ctx.session.textSecond_problem1 = null;
       }
   })};
+
+
