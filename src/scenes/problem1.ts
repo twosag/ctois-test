@@ -1,60 +1,48 @@
 import { MyContext } from '../bot';
-import { problem1Menu, choice1Menu, choice2Menu,choice3Menu } from '../buttons';
+import { ethernetMenuCampus, ethernetCorpusSumdu, ethernetCorpusMed,ethernetCorpusUabs } from '../buttons';
 import { Bot, Context} from "grammy";
-import {
-    type Conversation,
-    type ConversationFlavor,
-    conversations,
-    createConversation,
-  } from "@grammyjs/conversations";
+import {Conversation,conversations,createConversation} from "@grammyjs/conversations";
+
+//export const ETHERNET_CONVERSATION = "ethernet_conv";
+type MyConversation = Conversation<MyContext>;
+
+//Вызов меню "Інтернет підключення" с выбором университета
 export function setupProblem1Handlers(bot: Bot<MyContext>) {
-bot.callbackQuery(/^problem1$/, (ctx) => ctx.editMessageText('Выберите:', { reply_markup: problem1Menu }));
-  
-  bot.callbackQuery(/^choice[123]$/, async (ctx) => {
-      const choice = ctx.callbackQuery.data;
-      let menu;
-      if (choice === 'choice1') {
-          menu = choice1Menu;
-      } else if (choice === 'choice2') {
-          menu = choice2Menu;
-      } else if (choice === 'choice3') {
-          menu = choice3Menu;
-      }
-      await ctx.editMessageText('Выберите кнопку:', { reply_markup: menu });
-  });
-  
-  type MyConversation = Conversation<MyContext>;
-
-  async function textFirstOfProblem1(conversation: MyConversation, ctx: MyContext) {
-    await ctx.reply("Привіт! І бувайте!");
-    // Виходимо з розмови:
-    return;
-  }
-
-
-
-
-  bot.callbackQuery(/^button[0-9]+$/, async (ctx) => {
-      const button = ctx.callbackQuery.data;
-      ctx.session.button = button;
-      await ctx.editMessageText(`Вы выбрали ${button}. Напишите текст первый раз:`);
-  });
-  
-  bot.on(':text', async (ctx, next) => {
-      if (!ctx.session.button || !ctx.message) return next();
-      if (!ctx.session.textFirst_problem1) {
-          ctx.session.textFirst_problem1 = ctx.message.text;
-          await ctx.reply(`Вы написали: ${ctx.message.text}. Напишите текст второй раз:`);
-      } else {
-          ctx.session.textSecond_problem1 = ctx.message.text;
-          await ctx.reply(`Вы написали: ${ctx.message.text}. Спасибо! Ваш выбор и тексты сохранены.`);
-          // Здесь вы можете добавить код для сохранения данных в базу данных
-          // Например:
-          // saveToDatabase(ctx.from.username, new Date(), ctx.session.button, ctx.session.firstText, ctx.session.secondText);
-          ctx.session.button = null;
-          ctx.session.textFirst_problem1 = null;
-          ctx.session.textSecond_problem1 = null;
-      }
-  })};
+    bot.callbackQuery(["ethernet","site","templates","other"], (ctx) => 
+    ctx.editMessageText('Для більш детальної інформації, вкажіть будь ласка кампус університету:', { reply_markup: ethernetMenuCampus }));
+    
+    bot.callbackQuery(["ethernet_sumdu","ethernet_med", "ethernet_uabs"], async (ctx) => {
+        const campus = ctx.callbackQuery.data;
+        let menu;
+        if (campus === 'ethernet_sumdu') {
+            menu = ethernetCorpusSumdu;
+        } else if (campus === 'ethernet_med') {
+            menu = ethernetCorpusMed;
+        } else if (campus === 'ethernet_uabs') {
+            menu = ethernetCorpusUabs;
+        }
+        await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
+    });
+    
+    //Визов списка корпусов после выбора университета
+    bot.callbackQuery(/^button[0-9]+$/, async (ctx) => {
+        const button = ctx.callbackQuery.data;
+        ctx.session.button = button;
+        const conversation = ethernetConversation();
+        await ctx.editMessageText(`Дякую. Напишіть номер приміщення в якому відсутній інтернет:`, conversation);
+    });
+    
+    function ethernetConversation() {
+        return createConversation(
+            async (conversation: Conversation<MyContext>, ctx: MyContext) => {
+                await ctx.reply("Дякую. Напишіть номер приміщення в якому відсутній інтернет:")
+                const room_number = await conversation.wait();
+                await ctx.reply("Також вкажіть інвентарний номер системного блоку, де відсутній інтернет")
+                const comp_number = await conversation.wait();
+                await ctx.reply("Дякуємо за інформацію. Незабаром до вас завітає системний адміністратор. Гарного дня!");
+            },"ethernet_conv"
+        );
+    }
+}
 
 

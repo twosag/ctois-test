@@ -11,12 +11,13 @@ import {
   createConversation,
 } from "@grammyjs/conversations";
 import dotenv from "dotenv";
+import {ethernetConversation} from "./scenes/index"
 dotenv.config();
 
 interface SessionData {
   button?: string | null | true;
-  textFirst_problem1?: string | null | true;
-  textSecond_problem1?: string | null | true;
+  room_number?: string | null | true;
+  comp_number?: string | null | true;
   url?: string | null | true;
   textFirst_problem3?: string | null | true;
   textSecond_problem3?: string | null | true;
@@ -24,7 +25,7 @@ interface SessionData {
   lastMessageId?: number;
 }
 
-type MyContext = Context & SessionFlavor<SessionData> & ConversationFlavor;
+export type MyContext = Context & SessionFlavor<SessionData> &ConversationFlavor;
 
 
 const token = process.env.BOT_TOKEN as string;
@@ -35,7 +36,7 @@ function initial(): SessionData {
 }
 bot.use(session({ initial }));
 bot.use(conversations());
-
+bot.use(ethernetConversation());
 bot.command('start', (ctx) => ctx.reply('Выберите проблему:', { reply_markup: mainMenu }));
 
 setupProblem1Handlers(bot);
