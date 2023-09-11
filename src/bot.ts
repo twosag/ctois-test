@@ -8,16 +8,15 @@ import {
   type Conversation,
   type ConversationFlavor,
   conversations,
-  createConversation,
 } from "@grammyjs/conversations";
 import dotenv from "dotenv";
 import {ethernetConversation} from "./scenes/index"
 dotenv.config();
 
 interface SessionData {
-  button?: string | null | true;
-  room_number?: string | null | true;
-  comp_number?: string | null | true;
+  button?: string ;
+  room_number?: number;
+  comp_number?: number;
   url?: string | null | true;
   textFirst_problem3?: string | null | true;
   textSecond_problem3?: string | null | true;
@@ -37,11 +36,11 @@ function initial(): SessionData {
 bot.use(session({ initial }));
 bot.use(conversations());
 bot.use(ethernetConversation());
-bot.command('start', (ctx) => ctx.reply('Выберите проблему:', { reply_markup: mainMenu }));
+bot.command('start', (ctx) => {ctx.conversation.exit(); ctx.reply('Выберите проблему:', { reply_markup: mainMenu })});
 
 setupProblem1Handlers(bot);
 setupProblem2Handlers(bot);
-setupProblem3Handlers(bot);
+setupProblem3Handlers(bot); 
 setupProblem4Handlers(bot);
 bot.start();
 
