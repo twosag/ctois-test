@@ -1,7 +1,8 @@
 import { MyContext } from '../bot';
 import { ethernetMenuCampus, ethernetCorpusSumdu, ethernetCorpusMed,ethernetCorpusUabs, mainMenu } from '../buttons';
 import { Bot} from "grammy";
-import {Conversation,createConversation} from "@grammyjs/conversations";
+import {Conversation,conversations,createConversation} from "@grammyjs/conversations";
+import { replyEthernet } from '../handlers/reply'; 
 
 
 //Вызов меню "Інтернет підключення" с выбором университета
@@ -10,7 +11,7 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
         (err) => console.error("Розмова викинула помилку!", err),
         createConversation(ethernetConversation),
       );
-    bot.callbackQuery(["ethernet","site","templates","other"], async (ctx) => {
+    bot.callbackQuery(["ethernet"], async (ctx) => {
         try {
             await ctx.editMessageText('Для більш детальної інформації, вкажіть будь ласка кампус університету:', { reply_markup: ethernetMenuCampus });
         } catch (error) {
@@ -19,17 +20,18 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
         }
     });
     
-    bot.callbackQuery(["ethernet_sumdu","ethernet_med", "ethernet_uabs"], async (ctx) => {
+    bot.callbackQuery(["СумДУ","ethernet_med", "ethernet_uabs"], async (ctx) => {
         try {
-            const campus = ctx.callbackQuery.data;
+            const institut = ctx.callbackQuery.data;
             let menu;
-            if (campus === 'ethernet_sumdu') {
+            if (institut === 'СумДУ') {
                 menu = ethernetCorpusSumdu;
-            } else if (campus === 'ethernet_med') {
+            } else if (institut === 'ethernet_med') {
                 menu = ethernetCorpusMed;
-            } else if (campus === 'ethernet_uabs') {
+            } else if (institut === 'ethernet_uabs') {
                 menu = ethernetCorpusUabs;
             }
+            ctx.session.institut = institut
             await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
         } catch (error) {
             console.error(error);
@@ -40,8 +42,8 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
     //Визов списка корпусов после выбора университета
     bot.callbackQuery(/^button[0-9]+$/, async (ctx) => {
         try {
-            const button = ctx.callbackQuery.data;
-            ctx.session.button = button;
+            const corpus = ctx.callbackQuery.data;
+            ctx.session.corpus = corpus;
             await ctx.conversation.enter("ethernet_conv");
         } catch (error) {
             console.error(error);
@@ -50,6 +52,7 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
     });
 }
 
+const chatId = -1001954529652
 //Бот спрашивает за номер кабинета + инвентарный номер (Виполняется проверка на: является ли текст числом + принудительное завершение на кнопку /start)
 export function ethernetConversation() {
     return createConversation(
@@ -77,11 +80,22 @@ export function ethernetConversation() {
             } while (isNaN(Number(comp_number)));
             console.log({comp_number})
             console.log({room_number})
+            const username: any = ctx.from?.username;
+            const first_name: any = ctx.from?.first_name;
+            const last_name: any = ctx.from?.last_name;
+            const date = new Date();
+            const formattedDay = String(date.getDate()).padStart(2, '0');
+            const formattedMonth = String(date.getMonth() + 1).padStart(2, '0');
+            const formattedHours = String(date.getHours()).padStart(2, '0');
+            const formattedMinutes = String(date.getMinutes()).padStart(2, '0');
+            const dateTime = `Дата: ${formattedDay}.${formattedMonth}, Время: ${formattedHours}:${formattedMinutes}`;
+            const problem ="Інтернет підключення"
+            const message = replyEthernet(problem, ctx.session.institut, ctx.session.corpus, room_number, comp_number, username, first_name, last_name, dateTime);
             await ctx.reply("Дякуємо за інформацію. Незабаром до вас завітає системний адміністратор. Гарного дня!");
+            await ctx.api.sendMessage(chatId, await message, { parse_mode: 'Markdown' });
             return;
         },"ethernet_conv"
     );
 }
-
 
 

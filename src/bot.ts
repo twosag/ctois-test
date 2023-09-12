@@ -14,19 +14,22 @@ import {ethernetConversation} from "./scenes/index"
 dotenv.config();
 
 interface SessionData {
-  button?: string ;
-  room_number?: number;
-  comp_number?: number;
-  url?: string | null | true;
-  textFirst_problem3?: string | null | true;
-  textSecond_problem3?: string | null | true;
-  textFirst_problem4?: string | null | true;
-  lastMessageId?: number;
+  username?: string, 
+  first_name?: string | undefined, 
+  last_name?: string | undefined, 
+  problem?: string
+  institut?: string
+  corpus?: string 
+  room_number?: string
+  comp_number?: string
+  url?: string
+  template_number?: number
+  temlate_text?: string
+  another_text?: string
+  adminId?  : number;
 }
 
 export type MyContext = Context & SessionFlavor<SessionData> &ConversationFlavor;
-
-
 const token = process.env.BOT_TOKEN as string;
 export const bot = new Bot<MyContext>(token);
 
