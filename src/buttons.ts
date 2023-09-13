@@ -7,7 +7,7 @@ export const mainMenu = new InlineKeyboard()
   .text('Інша проблема', 'other').row();
 
 export const ethernetMenuCampus = new InlineKeyboard()
-  .text('СумДу', 'СумДУ').row()
+  .text('СумДУ', 'СумДУ').row()
   .text('Мед', 'ethernet_med').row()
   .text('Уабс', 'ethernet_uabs').row();
 

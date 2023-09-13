@@ -57,6 +57,7 @@ const chatId = -1001954529652
 export function ethernetConversation() {
     return createConversation(
         async (conversation: Conversation<MyContext>, ctx: MyContext) => {
+
             let room_number;
             do {
                 if (room_number === "/start") {
@@ -80,18 +81,13 @@ export function ethernetConversation() {
             } while (isNaN(Number(comp_number)));
             console.log({comp_number})
             console.log({room_number})
-            const username: any = ctx.from?.username;
-            const first_name: any = ctx.from?.first_name;
-            const last_name: any = ctx.from?.last_name;
-            const date = new Date();
-            const formattedDay = String(date.getDate()).padStart(2, '0');
-            const formattedMonth = String(date.getMonth() + 1).padStart(2, '0');
-            const formattedHours = String(date.getHours()).padStart(2, '0');
-            const formattedMinutes = String(date.getMinutes()).padStart(2, '0');
-            const dateTime = `Дата: ${formattedDay}.${formattedMonth}, Время: ${formattedHours}:${formattedMinutes}`;
+            const username = ctx.from?.username;
+            const first_name = ctx.from?.first_name;
+            const last_name= ctx.from?.last_name;
             const problem ="Інтернет підключення"
-            const message = replyEthernet(problem, ctx.session.institut, ctx.session.corpus, room_number, comp_number, username, first_name, last_name, dateTime);
-            await ctx.reply("Дякуємо за інформацію. Незабаром до вас завітає системний адміністратор. Гарного дня!");
+            const message = replyEthernet(problem, ctx.session.institut, ctx.session.corpus, room_number, comp_number, username, first_name, last_name,);
+            await ctx.reply("Дякуємо за інформацію. Незабаром до вас завітає системний адміністратор. Гарного дня!😊");
+            await ctx.answerCallbackQuery({text:"Дякуємо за інформацію. Незабаром до вас завітає системний адміністратор. Гарного дня!😊", show_alert: true});
             await ctx.api.sendMessage(chatId, await message, { parse_mode: 'Markdown' });
             return;
         },"ethernet_conv"

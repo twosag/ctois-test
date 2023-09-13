@@ -1,4 +1,5 @@
 import { Bot, Context, session, SessionFlavor } from 'grammy';
+import { EmojiFlavor, emojiParser } from "@grammyjs/emoji";
 import { mainMenu } from './buttons';
 import { setupProblem1Handlers } from './scenes/problem1';
 import { setupProblem2Handlers } from './scenes/problem2';
@@ -14,7 +15,7 @@ import {ethernetConversation} from "./scenes/index"
 dotenv.config();
 
 interface SessionData {
-  username?: string, 
+  username?: string | undefined, 
   first_name?: string | undefined, 
   last_name?: string | undefined, 
   problem?: string
@@ -39,12 +40,11 @@ function initial(): SessionData {
 bot.use(session({ initial }));
 bot.use(conversations());
 bot.use(ethernetConversation());
-bot.command('start', (ctx) => {ctx.conversation.exit(); ctx.reply('Выберите проблему:', { reply_markup: mainMenu })});
-
 setupProblem1Handlers(bot);
 setupProblem2Handlers(bot);
 setupProblem3Handlers(bot); 
 setupProblem4Handlers(bot);
+bot.command('start', (ctx) => {ctx.conversation.exit(); ctx.reply('Выберите проблему:', { reply_markup: mainMenu })});
 bot.start();
 
 
