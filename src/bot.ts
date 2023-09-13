@@ -1,10 +1,9 @@
 import { Bot, Context, session, SessionFlavor } from 'grammy';
-import { EmojiFlavor, emojiParser } from "@grammyjs/emoji";
 import { mainMenu } from './buttons';
-import { setupProblem1Handlers } from './scenes/problem1';
-import { setupProblem2Handlers } from './scenes/problem2';
-import { setupProblem3Handlers } from './scenes/problem3';
-import { setupProblem4Handlers } from './scenes/problem4';
+import { setupProblem1Handlers } from './scenes/ethernetProblem';
+import { setupProblem2Handlers } from './scenes/siteProblem';
+import { setupProblem3Handlers } from './scenes/templatesProblem';
+import { setupProblem4Handlers } from './scenes/anotherProblem';
 import {
   type Conversation,
   type ConversationFlavor,

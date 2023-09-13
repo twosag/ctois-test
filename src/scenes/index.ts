@@ -1,1 +1,1 @@
-export * from "./problem1"
+export * from "./ethernetProblem"

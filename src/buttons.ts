@@ -1,15 +1,18 @@
 import { InlineKeyboard, Keyboard } from "grammy";
+import { Context } from "grammy";
 
 export const mainMenu = new InlineKeyboard()
-  .text('Інтернет підключення', 'ethernet').row()
-  .text('Не працює сайт', 'site').row()
-  .text('Проблема з шаблонами СумДУ', 'templates').row()
-  .text('Інша проблема', 'other').row();
+  .text('🌐 Відсутнє інтернет підключення', 'ethernet').row()
+  .text('🖥 Не працює сайт', 'site').row()
+  .text('📄 Проблема з шаблонами СумДУ', 'templates').row()
+  .text('✏️ Інша проблема', 'other')
+  .text('📞 Телефоний довідник', 'phone').row()
+  .text('⤴️ Головна сторінка ЦТОІС', 'ctois');
 
 export const ethernetMenuCampus = new InlineKeyboard()
-  .text('СумДУ', 'СумДУ').row()
-  .text('Мед', 'ethernet_med').row()
-  .text('Уабс', 'ethernet_uabs').row();
+  .text('Головний кампус СумДУ', 'Головний кампус СумДУ').row()
+  .text('Кампус Медичного інституту', 'Кампус Медичного інституту').row()
+  .text('Кампус ННІ БТ "УАБС" та ННІП', 'Кампус ННІ БТ \"УАБС\" та ННІП').row();
 
 export const ethernetCorpusSumdu = new InlineKeyboard()
   .text('Г', 'button1')
@@ -36,4 +39,7 @@ export const ethernetCorpusUabs = new InlineKeyboard()
   .text('Кнопка14', 'button14').row()
   .text('Кнопка15', 'button15').row();
 
-export const backButton = new Keyboard().text("Назад").resized().oneTime();
+export const backButton = new InlineKeyboard().text("Головне меню","Головне меню");
+
+
+
