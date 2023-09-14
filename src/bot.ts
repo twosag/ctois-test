@@ -10,7 +10,7 @@ import {
   conversations,
 } from "@grammyjs/conversations";
 import dotenv from "dotenv";
-import {ethernetConversation} from "./scenes/index"
+import {ethernetConversation } from "./scenes/index"
 dotenv.config();
 
 interface SessionData {
@@ -19,7 +19,7 @@ interface SessionData {
   last_name?: string | undefined, 
   problem?: string
   institut?: string
-  corpus?: string 
+  corpus?: string | undefined, 
   room_number?: string
   comp_number?: string
   url?: string
@@ -39,6 +39,7 @@ function initial(): SessionData {
 bot.use(session({ initial }));
 bot.use(conversations());
 bot.use(ethernetConversation());
+//bot.use(ethernetConversationMed()); 
 setupProblem1Handlers(bot);
 setupProblem2Handlers(bot);
 setupProblem3Handlers(bot); 

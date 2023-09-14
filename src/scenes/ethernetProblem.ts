@@ -13,38 +13,40 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
             await ctx.editMessageText('Для більш детальної інформації, вкажіть будь ласка кампус університету:', { reply_markup: ethernetMenuCampus })
         } catch (error) {
             console.error(error);
-            await ctx.reply('Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.');
+            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.');
         }
     });
     
-    bot.callbackQuery(["Головний кампус СумДУ","Кампус Медичного інституту", "Кампус ННІ БТ \"УАБС\" та ННІП"], async (ctx) => {
+    bot.callbackQuery(["Головний кампус СумДУ", "Кампус Медичного інституту","Кампус ННІ БТ \"УАБС\" та ННІП"], async (ctx) => {
+        const institut = ctx.callbackQuery.data;
         try {
-            const institut = ctx.callbackQuery.data;
             let menu;
             if (institut === 'Головний кампус СумДУ') {
                 menu = ethernetCorpusSumdu;
+                await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
             } else if (institut === 'Кампус Медичного інституту') {
-                menu = ethernetCorpusMed;
+                await ctx.conversation.enter("ethernet_conv");
             } else if (institut === 'Кампус ННІ БТ "УАБС" та ННІП') {
                 menu = ethernetCorpusUabs;
+                await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
             }
             ctx.session.institut = institut
-            await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
+            
         } catch (error) {
             console.error(error);
-            await ctx.reply('Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.');
+            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.');
         }
     });
     //Визов списка корпусов после выбора университета
-    bot.callbackQuery(/^button[0-9]+$/, async (ctx) => {
+    bot.on("callback_query:data", async (ctx) => {
+        const corpus = ctx.callbackQuery.data;
         try {
-            const corpus = ctx.callbackQuery.data;
             ctx.session.corpus = corpus;
             await ctx.conversation.enter("ethernet_conv");
             console.log(ctx.callbackQuery)
         } catch (error) {
             console.error(error);
-            await ctx.reply('Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.');
+            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.');
         }
     });
 }
@@ -53,7 +55,7 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
 const chatId = -1001954529652
 //Бот спрашивает за номер кабинета + инвентарный номер (Виполняется проверка на: является ли текст числом + принудительное завершение на кнопку /start)
 export function ethernetConversation() {
-
+    
     return createConversation(
         async (conversation: Conversation<MyContext>, ctx: MyContext) => {
             let room_number;
@@ -86,12 +88,13 @@ export function ethernetConversation() {
             const problem ="Інтернет підключення"
             const message = replyEthernet(problem, ctx.session.institut, ctx.session.corpus, room_number, comp_number, username, first_name, last_name,);
             //await ctx.reply("Дякуємо за інформацію. Незабаром до вас завітає системний адміністратор. Гарного дня!😊");
-            await ctx.answerCallbackQuery({text:"✅ Найближчим часом проблему буде вирішено", show_alert: true});
+            await ctx.answerCallbackQuery({text:"✅ Звернення було передано до розгляду", show_alert: true});
             await ctx.reply("Вы були повернені до головного меню", {reply_markup: mainMenu})
             await ctx.api.sendMessage(chatId, await message, { parse_mode: 'Markdown' });
             return;
         },"ethernet_conv"
     );
-}
+};
+
 
 
