@@ -1,5 +1,5 @@
 import { MyContext } from '../bot';
-import { ethernetMenuCampus, ethernetCorpusSumdu, ethernetCorpusMed,ethernetCorpusUabs, mainMenu, backButton } from '../buttons';
+import { ethernetMenuCampus, ethernetCorpusSumdu, ethernetCorpusMed,ethernetCorpusUabs, mainMenu } from '../buttons';
 import { Bot, Context} from "grammy";
 import {Conversation,conversations,createConversation} from "@grammyjs/conversations";
 import { replyEthernet } from '../handlers/reply'; 
@@ -13,7 +13,7 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
             await ctx.editMessageText('Для більш детальної інформації, вкажіть будь ласка кампус університету:', { reply_markup: ethernetMenuCampus })
         } catch (error) {
             console.error(error);
-            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.');
+            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.', {reply_markup:mainMenu});
         }
     });
     
@@ -23,18 +23,16 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
             let menu;
             if (institut === 'Головний кампус СумДУ') {
                 menu = ethernetCorpusSumdu;
-                await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
             } else if (institut === 'Кампус Медичного інституту') {
-                await ctx.conversation.enter("ethernet_conv");
+                menu = ethernetCorpusMed;
             } else if (institut === 'Кампус ННІ БТ "УАБС" та ННІП') {
                 menu = ethernetCorpusUabs;
-                await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
             }
             ctx.session.institut = institut
-            
+            await ctx.editMessageText('Выберіть корпус вашого університету в якому ви перебуваєте:', { reply_markup: menu });
         } catch (error) {
             console.error(error);
-            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.');
+            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.', {reply_markup:mainMenu});
         }
     });
     //Визов списка корпусов после выбора университета
@@ -46,7 +44,7 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
             console.log(ctx.callbackQuery)
         } catch (error) {
             console.error(error);
-            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.');
+            await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.', {reply_markup:mainMenu});
         }
     });
 }
@@ -58,12 +56,18 @@ export function ethernetConversation() {
     
     return createConversation(
         async (conversation: Conversation<MyContext>, ctx: MyContext) => {
+            let kafedra;
+            await ctx.reply("Введіть назву своєї кафедри.\n*Наприклад:* \`ТПХ\`", { parse_mode: 'Markdown' })
+            const kafedra_message = await conversation.wait();
+            kafedra = kafedra_message.message?.text;
+
+
             let room_number;
             do {
                 if (room_number === "/start") {
                     return ctx.reply("Дякую", {reply_markup: mainMenu});
                 } else {
-                    await ctx.reply("Введите номер кабинета. Только цифры")
+                    await ctx.reply("Введіть номер свого кабінету.\n*Наприклад:* \`208\`",{ parse_mode: 'Markdown' })
                 const room_number_message = await conversation.wait();
                 room_number = room_number_message.message?.text;
                 
@@ -75,7 +79,7 @@ export function ethernetConversation() {
                 if (comp_number === "/start") {
                     return ctx.reply("Дякую", {reply_markup: mainMenu});
                 } else {
-                    await ctx.reply("Також вкажіть інвентарний номер системного блоку, де відсутній інтернет")
+                    await ctx.reply("Вкажіть інвентарний номер системного блоку, де відсутній інтернет.\n*Наприклад:* \`10478205\`",{ parse_mode: 'Markdown' })
                     const comp_number_message = await conversation.wait();
                     comp_number = comp_number_message.message?.text;
                 }
@@ -86,7 +90,7 @@ export function ethernetConversation() {
             const first_name = ctx.from?.first_name;
             const last_name= ctx.from?.last_name;
             const problem ="Інтернет підключення"
-            const message = replyEthernet(problem, ctx.session.institut, ctx.session.corpus, room_number, comp_number, username, first_name, last_name,);
+            const message = replyEthernet(problem, ctx.session.institut, ctx.session.corpus, room_number, comp_number, kafedra, username, first_name,);
             //await ctx.reply("Дякуємо за інформацію. Незабаром до вас завітає системний адміністратор. Гарного дня!😊");
             await ctx.answerCallbackQuery({text:"✅ Звернення було передано до розгляду", show_alert: true});
             await ctx.reply("Вы були повернені до головного меню", {reply_markup: mainMenu})

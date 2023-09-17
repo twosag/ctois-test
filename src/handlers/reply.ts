@@ -6,8 +6,9 @@ const site_admin = process.env.SITE_ADMIN as string;
 
 export async function replyEthernet(
     problem: string, 
-    institut: string | undefined, 
-    corpus: string | undefined, 
+    institut?: string, 
+    corpus?: string,
+    kafedra?: string, 
     room_number?: string, 
     comp_number?: string, 
     username?: string, 
@@ -18,7 +19,7 @@ export async function replyEthernet(
 *- Проблема:* \`${problem}\`
 *- Інститут:* ${institut}
 *- Корпус:* ${corpus}
-*- Кафедра:*
+*- Кафедра:* ${kafedra}
 *- Кабінет* ${room_number}
 *- Інвентарний номер комп'ютера:* ${comp_number}\n
 @${site_admin}`;
