@@ -10,7 +10,7 @@ export const mainMenu = new InlineKeyboard()
 
 export const ethernetMenuCampus = new InlineKeyboard()
   .text('Головний кампус СумДУ', 'Головний кампус СумДУ').row()
-  .text('Кампус Медичного інституту', 'Кампус Медичного інституту').row()
+  .text('Кампус Медичный інститут', 'Медичный інститут').row()
   .text('Кампус ННІ БТ \"УАБС\" та ННІП', 'Кампус ННІ БТ \"УАБС\" та ННІП').row();
 
 export const ethernetCorpusSumdu = new InlineKeyboard()
@@ -32,13 +32,13 @@ export const ethernetCorpusMed = new InlineKeyboard()
 
 export const ethernetCorpusUabs = new InlineKeyboard()
   .text('Конгрес ЦЕНТР', 'Конгрес ЦЕНТР').row()
-  .text('Меличний корпус', 'Медичний корпус')
-  .text('Корпус 1', 'Корпус 1').row()
-  .text('Корпус 2', 'Корпус 2')
-  .text('Корпус 2А', 'Корпус 2А').row()
-  .text('Корпус 3', 'Корпус 3')
-  .text('Манеж', 'Манеж').row()
+  .text('Корпус 1', 'Корпус 1')
+  .text('Корпус 2', 'Корпус 2').row()
+  .text('Корпус 2А', 'Корпус 2А')
+  .text('Корпус 3', 'Корпус 3').row()
   .text('Спортлайн', 'Спортлайн')
+  .text('Манеж', 'Манеж').row()
+  .text('Медичний корпус', 'Медичний корпус')
 
 export const backButton = new InlineKeyboard().text("Головне меню","Головне меню");
 

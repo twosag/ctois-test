@@ -14,7 +14,7 @@ export async function replyEthernet(
     username?: string, 
     first_name?: any, 
     last_name?: any,) {
-        return `🚩*Нове повідомлення про проблему від:* @${username}\n
+        return `🚩*Нове повідомлення про проблему від:* ${username ? '@' + username : first_name}\n
 *Дані від користувача:*
 *- Проблема:* \`${problem}\`
 *- Інститут:* ${institut}

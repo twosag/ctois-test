@@ -1,4 +1,4 @@
-import { MyContext } from "../bot";
+/*import { MyContext } from "../bot";
 import { Bot } from "grammy";
 import { backButton, mainMenu } from "../buttons";
 
@@ -27,3 +27,4 @@ bot.on(':text', async (ctx, next) => {
     // saveToDatabase(ctx.from.username, new Date(), ctx.message.text);
     ctx.session.another_text;
 })};
+*/
