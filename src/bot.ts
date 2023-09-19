@@ -1,6 +1,7 @@
 import { Bot, Context, GrammyError, HttpError, session, SessionFlavor } from 'grammy';
 import { mainMenu } from './buttons';
 import { setupProblem3Handlers } from './scenes/templatesProblem';
+import { run } from "@grammyjs/runner";
 //import { setupProblem4Handlers } from './scenes/anotherProblem';
 import {
   type Conversation,
@@ -31,6 +32,7 @@ interface SessionData {
 export type MyContext = Context & SessionFlavor<SessionData> &ConversationFlavor;
 const token = process.env.BOT_TOKEN as string;
 export const bot = new Bot<MyContext>(token);
+const runner = run(bot);
 
 function initial(): SessionData {
   return {};
@@ -50,6 +52,7 @@ bot.catch((err) => {
   console.error(`Помилка під час обробки оновлення ${ctx.update.update_id}:`);
   const e = err.error;
   if (e instanceof GrammyError) {
+    console.error("Grammy Error:", e);
     return ctx.reply("❌ Ваш запит було прервано. Введіть дані трохи швидше ❌", {reply_markup: mainMenu})
   } else if (e instanceof HttpError) {
     console.error("Не вдалося звʼязатися з Telegram:", e);
@@ -57,6 +60,9 @@ bot.catch((err) => {
     console.error("Невідома помилка:", e);
   }
 });
-bot.start();
+//bot.start();
+const stopRunner = () => runner.isRunning() && runner.stop();
+process.once("SIGINT", stopRunner);
+process.once("SIGTERM", stopRunner);
 
 

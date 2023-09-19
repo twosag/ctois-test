@@ -8,6 +8,7 @@ import { replySite } from "../handlers/reply";
 export function setupProblem2Handlers(bot: Bot<MyContext> ) {
 bot.callbackQuery("site", async (ctx) => {
     try {
+        await ctx.answerCallbackQuery();
         await ctx.conversation.enter("site_conv");
     } catch(error) {
         console.error(error)
@@ -47,7 +48,7 @@ export function siteConversation() {
             const first_name = ctx.from?.first_name;
             const problem = "Не працює сайт"
             const message = replySite(problem, url, username,);
-            await ctx.answerCallbackQuery({ text: "✅ Звернення було передано до розгляду", show_alert: true });
+            // await ctx.answerCallbackQuery({ text: "✅ Звернення було передано до розгляду", show_alert: true });
             await ctx.reply("Вы були повернені до головного меню", { reply_markup: mainMenu })
             await ctx.api.sendMessage(chatId, await message, { parse_mode: 'Markdown' });
             return;
