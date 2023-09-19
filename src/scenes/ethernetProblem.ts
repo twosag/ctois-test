@@ -7,9 +7,8 @@ import { replyEthernet } from '../handlers/reply';
 
 //Виклик меню "Інтернет підключення" з вибором університета
 
-export function setupProblem1Handlers(bot: Bot<MyContext>) {
-
-    bot.callbackQuery(["ethernet"], async (ctx) => {
+export function ethernetProblem1(bot: Bot<MyContext>) {
+    bot.callbackQuery("ethernet", async (ctx) => {
         try {
             await ctx.editMessageText('Для більш детальної інформації, вкажіть будь ласка кампус університету:', { reply_markup: ethernetMenuCampus })
         } catch (error) {
@@ -37,11 +36,11 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
             console.error(error);
             await ctx.reply('Вибачте, виникла помилка. Спробуйте ще раз.', { reply_markup: mainMenu });
         }
+       
     });
 
     //Виклик розмови після вибору корпусу 
-
-    bot.on("callback_query:data", async (ctx) => {
+    bot.callbackQuery(/^[а-яА-ЯїЇєЄіІ\s]*$/, async (ctx) => {
         const corpus = ctx.callbackQuery.data;
         try {
             ctx.session.corpus = corpus;
@@ -53,6 +52,7 @@ export function setupProblem1Handlers(bot: Bot<MyContext>) {
         }
     });
 }
+
 
 
 const chatId = -1001954529652

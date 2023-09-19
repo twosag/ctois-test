@@ -1,7 +1,5 @@
 import { Bot, Context, GrammyError, HttpError, session, SessionFlavor } from 'grammy';
 import { mainMenu } from './buttons';
-import { setupProblem1Handlers } from './scenes/ethernetProblem';
-import { setupProblem2Handlers } from './scenes/siteProblem';
 import { setupProblem3Handlers } from './scenes/templatesProblem';
 //import { setupProblem4Handlers } from './scenes/anotherProblem';
 import {
@@ -10,7 +8,7 @@ import {
   conversations,
 } from "@grammyjs/conversations";
 import dotenv from "dotenv";
-import {ethernetConversation } from "./scenes/index"
+import {ethernetConversation, siteConversation, ethernetProblem1,setupProblem2Handlers } from "./scenes/index"
 dotenv.config();
 
 interface SessionData {
@@ -39,8 +37,10 @@ function initial(): SessionData {
 }
 bot.use(session({ initial }));
 bot.use(conversations());
+
+bot.use(siteConversation());
 bot.use(ethernetConversation());
-setupProblem1Handlers(bot);
+ethernetProblem1(bot);
 setupProblem2Handlers(bot);
 setupProblem3Handlers(bot); 
 //setupProblem4Handlers(bot); - розробка у майбутньому 

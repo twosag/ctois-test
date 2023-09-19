@@ -1,44 +1,56 @@
-import { Conversation, conversations, createConversation } from "@grammyjs/conversations";
+//import { Conversation, conversations, createConversation } from "@grammyjs/conversations";
 import { MyContext } from "../bot";
 import { Bot} from "grammy";
+import { Conversation, conversations, createConversation } from "@grammyjs/conversations";
 import { mainMenu } from "../buttons";
+import { replySite } from "../handlers/reply";
 
-export function setupProblem2Handlers(bot: Bot<MyContext>) {
+export function setupProblem2Handlers(bot: Bot<MyContext> ) {
 bot.callbackQuery("site", async (ctx) => {
     try {
-        await ctx.editMessageText(`Напишите URL-адрес:`);
+        await ctx.conversation.enter("site_conv");
     } catch(error) {
         console.error(error)
         await ctx.reply("ой, виникла помилка");
     }
-})};
-/*
-bot.on(':text', async (ctx, next) => {
-    if (!ctx.session.url || !ctx.message) return next();
-    ctx.session.url = ctx.message.text;
-    await ctx.reply(`Вы написали: ${ctx.message.text}. Спасибо! Ваш URL сохранен.`);
-    // Здесь вы можете добавить код для сохранения данных в базу данных
-    // Например:
-    // saveToDatabase(ctx.from.username, new Date(), ctx.session.url);
+})
 
-})};
-*/
-/*
+};
+const chatId = -1001954529652
+
 export function siteConversation() {
+
     return createConversation(
-        async (conversation: Conversation<MyContext>, ctx: MyContext) => {
+        async function waitForMe(conversation: Conversation<MyContext>, ctx: MyContext) { 
+            function isValidUrl(string: string | URL) {
+                try {
+                  new URL(string);
+                  return true;
+                } catch (_) {
+                  return false;  
+                }
+              }
             let url;
             do {
-                if (url === "/start") {
-                    return ctx.reply("Дякую",{reply_markup:mainMenu});
+                if (url === "/start" ) {
+                    ctx.reply("Дякую", { reply_markup: mainMenu });
+                    url = null;
+                    return;
                 } else {
-                    await ctx.editMessageText(`Напишите URL-адрес:`);
-                    const url_string = await conversation.wait();
-                    url = url_string.message?.text;
+                    ctx.reply("Введіть url домену сайту або сторінки сайту.\n*Наприклад:* \`https://sumdu.edu.ua/uk/\`.", { parse_mode: 'Markdown' })
                 }
-            } while (isNaN(Number(url)))
-
-            }
-        }
-    )
-} */
+                const url_message = await conversation.waitFor("message:text");
+                url = url_message.message.text;
+            } while (!isValidUrl(url));
+            
+            const username = ctx.from?.username;
+            const first_name = ctx.from?.first_name;
+            const problem = "Не працює сайт"
+            const message = replySite(problem, url, username,);
+            await ctx.answerCallbackQuery({ text: "✅ Звернення було передано до розгляду", show_alert: true });
+            await ctx.reply("Вы були повернені до головного меню", { reply_markup: mainMenu })
+            await ctx.api.sendMessage(chatId, await message, { parse_mode: 'Markdown' });
+            return;
+        }, "site_conv"
+    );
+};
